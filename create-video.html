@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" />
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.2.3/css/foundation.min.css" />
+	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.2.3/css/normalize.css" />
+    <script src="//use.edgefonts.net/source-code-pro.js"></script>
+    <link href="//files.brightcove.com/proxima-nova/font-faces.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href="/en/styles/bcls-doc-site.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/github.min.css" />
+    <link rel="stylesheet" type="text/css" href="/en/styles/anytime.5.0.0-1401232312.min.css" />
+  <script type="text/javascript">
+  <!--//--><![CDATA[//><!--
+	var _gaq = _gaq || [];
+	_gaq.push(
+		["_setAccount", "UA-2728311-23"],
+		["_setDomainName", ".brightcove.com"],
+		["_trackPageview"]
+	);
+	(function() {var ga = document.createElement("script");ga.type = "text/javascript";ga.async = true;ga.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(ga, s);})();
+//--><!]]>
+	</script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
+  </head>
+
+  <body>
+
+    <div class="row">
+        <div id="main" class="large-10 small-12 columns">
+            <p>Write token: <input id="yourWriteToken" type="text" value="nE8-UGtf07sMEy9aDP3IR9tCQYCL9yCWtT9agH_eVQ2lVPhV7PymVA.." /></p>
+            <p>API location: <input id="yourAPILocation" value="//api.brightcove.com/services/post" /></p>
+            <p>Video name: <input id="name" size="55" type="text"/></p>
+            <p>Short description: <input id="shortDescription" size="55" type="text"/></p>
+            <p>Tags (comma-separated, no spaces): <input id="tags" size="70" type="text"/></p>
+            <p>Start date: <input id="startDate" type="text" size="50">
+             &nbsp; Start time: <input id="startTime" type="text" size="50"></p>
+            <p>End date: <input id="endDate" type="text" size="50">
+             &nbsp; End time: <input id="endTime" type="text" size="50"></p>
+      			<p>Encode to: 
+              <select id="encodeTo">
+                <option>FLV</option>
+        				<option selected="selected">MP4</option>
+              </select>
+      			</p>
+      			<p>Create multiple renditions: 
+              <select id="multiRenditions">
+                <option selected="selected">False</option>
+        				<option>True</option>
+              </select>
+      			</p>
+            </div>
+            <div class="section" id="request">
+            <form id="create_video_sample" method="POST" enctype="multipart/form-data" target="postFrame">
+              <!--This is where the actual json request lives, it has to come before the file input -->
+              <input name="JSONRPC" />
+              <p><input type="file" name="filePath"/></p>
+              <!--<p><button id="submitButton" onclick="doFileUpload()">Upload</button></p>-->
+              <p><span class="BCL-btn" onclick="doFileUpload()">Create Video</span></p>
+              <!--display the json request -->
+              <h2>Media API Request</h2>
+              <fieldset>
+              <legend>JSON Request</legend>
+                <input name="JSONView" id="JSONView" style="width:97%;padding:5px;border:1px #999 solid" />
+              </fieldset>
+            </form>
+            <pre><code id="jsonRequest1"></code></pre>
+          </div>
+          <div class="section" id="response">
+            <h2>Media API Response</h2>
+            <fieldset>
+            <legend>Response:</legend>
+              <iframe id="postFrame" name="postFrame" style="width:100%;border:none"></iframe>
+            </fieldset>
+          </div>
+      </div>
+    </div>
+    <!-- bcl scripts -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.2.1/jquery-migrate.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.0/fastclick.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.2.3/js/foundation.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+    
+    <script src="/en/scripts/docs-nav-data.min.js"></script>
+    <script src="/en/scripts/bcls-doc-site.js"></script>
+    <script src="/en/scripts/bc-mapi.js"></script>
+        <script src="/en/scripts/anytime.5.0.0-1401232312.min.js"></script>
+    <script>
+        $(document).foundation();
+    </script>
+    <script id="pageScript" type="text/javascript">
+      /******** Any scripts specific to page samples should go here *********/
+      BCL = {};
+      BCL.name = document.getElementById('name');
+      BCL.shortDescription = document.getElementById('shortDescription');
+      BCL.tags = document.getElementById('tags');
+      BCL.startDate = document.getElementById("startDate");
+      BCL.startTime = document.getElementById("startTime");
+      BCL.endDate = document.getElementById("endDate");
+      BCL.endTime = document.getElementById("endTime");
+      BCL.thisDate = new Date();
+      BCL.timeZone = BCL.thisDate.getTimezoneOffset();
+      BCL.today = BCL.thisDate.toDateString();
+      BCL.yearFromNow = BCL.thisDate.getTime() + 31536000000;
+      BCL.nextYear = new Date(BCL.yearFromNow);
+      BCL.nextYearDate = BCL.nextYear.toDateString();
+      BCL.nextYearTime = BCL.nextYear.toTimeString();
+      BCL.now = BCL.thisDate.toTimeString();
+      BCL.startDate.value = BCL.today;
+      BCL.startTime.value = BCL.now;
+      BCL.endDate.value = BCL.nextYearDate;
+      BCL.endTime.value = BCL.nextYearTime;
+      AnyTime.picker( "startDate", { format: "%a %M %d %Y" } );
+      AnyTime.picker( "startTime", { format: "%H:%i:%s GMT%-", labelTitle: "Time", labelHour: "Hour", labelMinute: "Minute" } );
+      AnyTime.picker( "endDate", { format: "%a %M %d %Y" } );
+      AnyTime.picker( "endTime", { format: "%H:%i:%s GMT%-", labelTitle: "Time", labelHour: "Hour", labelMinute: "Minute" } );
+      BCL.encodeTo = document.getElementById("encodeTo");
+      BCL.multiRenditions = document.getElementById("multiRenditions");
+		
+      doFileUpload = function (){
+        form = document.getElementById("create_video_sample");
+				if(BCL.name.value == "" || BCL.shortDescription.value == "" || form.filePath.value == ""){
+          alert("Required: Name, Short Description and File");
+					document.getElementById("jsonRequest1").innerHTML = "";
+					document.getElementById("postFrame").src = "";
+          return;
+        }
+        buildJSONRequest(form);
+        form.action = document.getElementById("yourAPILocation").value;
+        form.submit();
+      }
+      buildJSONRequest = function(form){
+				var endDate = BCL.endDate + " " + BCL.endTime;
+				if (endDate !== " ") {
+					endDate = new Date(endDate).getTime();
+				} else {
+					endDate = null;
+				}
+				BCL.json = {};
+				BCL.json.params = {};
+				BCL.json.params.video = {};
+				json = form.JSONRPC
+				//Construct the JSON request:
+				BCL.json.method = "create_video";
+				BCL.json.params.video.name = BCL.name.value;
+				BCL.json.params.video.shortDescription = BCL.shortDescription.value;
+				BCL.json.params.video.startDate = new Date(BCL.startDate.value + " " + BCL.startTime.value).getTime();
+				BCL.json.params.video.endDate = endDate;
+				if (BCL.tags.value !== "") {
+          // 2do: add strip spaces
+					BCL.json.params.video.tags = BCL.tags.value.split(",");
+				}
+  	    BCL.json.params.encode_to = BCL.encodeTo.options[BCL.encodeTo.selectedIndex].value;
+	  		BCL.json.params.create_multiple_renditions = BCL.multiRenditions.options[BCL.multiRenditions.selectedIndex].value;
+		  
+	  		BCL.json.params.token = document.getElementById('yourWriteToken').value;
+		  
+				json.value  = JSON.stringify(BCL.json);
+				document.getElementById('JSONView').value = json.value;
+				document.getElementById("jsonRequest1").innerHTML = JSON.stringify(BCL.json);
+        console.log(JSON.stringify(BCL.json));
+      }
+
+
+    </script>
+    <script type="text/javascript">
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  document.getElementById('name').value = 'test ' + parseInt(Math.random() * 1000);
+
+
+}, false);
+
+
+    </script>
+	</body>
+</html>
