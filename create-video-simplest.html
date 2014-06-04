@@ -57,7 +57,8 @@
             <div class="section" id="request">
             <form id="create_video_sample" method="POST" enctype="multipart/form-data" target="postFrame">
               <!--This is where the actual json request lives, it has to come before the file input -->
-              <input id="jsonTest" name="JSONRPC" value='{"params":{"video":{"name":"test 753","shortDescription":"blargh","startDate":1401918411000,"endDate":null},"encode_to":"MP4","create_multiple_renditions":"False","token":"nE8-UGtf07sMEy9aDP3IR9tCQYCL9yCWtT9agH_eVQ2lVPhV7PymVA.."},"method":"create_video"}' />
+              <!-- <input id="jsonTest" name="JSONRPC" value='{"params":{"video":{"name":"test 753","shortDescription":"blargh","startDate":1401918411000,"endDate":null},"encode_to":"MP4","create_multiple_renditions":"False","token":"nE8-UGtf07sMEy9aDP3IR9tCQYCL9yCWtT9agH_eVQ2lVPhV7PymVA.."},"method":"create_video"}' /> -->
+              <input id="jsonTest" name="JSONRPC" />
               <p><input type="file" name="filePath"/></p>
               <!--<p><button id="submitButton" onclick="doFileUpload()">Upload</button></p>-->
               <p><span class="BCL-btn" onclick="doFileUpload()">Create Video</span></p>
@@ -137,38 +138,40 @@
         form.submit();
       }
       buildJSONRequest = function(form){
-				// var endDate = BCL.endDate + " " + BCL.endTime;
-				// if (endDate !== " ") {
-				// 	endDate = new Date(endDate).getTime();
-				// } else {
-				// 	endDate = null;
-				// }
-				// BCL.json = {};
-				// BCL.json.params = {};
-				// BCL.json.params.video = {};
-				// json = form.JSONRPC
-				// //Construct the JSON request:
-				// BCL.json.method = "create_video";
-				// // BCL.json.params.video.name = BCL.name.value;
-				// BCL.json.params.video.shortDescription = BCL.shortDescription.value;
-				// BCL.json.params.video.startDate = new Date(BCL.startDate.value + " " + BCL.startTime.value).getTime();
-				// BCL.json.params.video.endDate = endDate;
+				var endDate = BCL.endDate + " " + BCL.endTime;
+				if (endDate !== " ") {
+					endDate = new Date(endDate).getTime();
+				} else {
+					endDate = null;
+				}
+				BCL.json = {};
+				BCL.json.params = {};
+				BCL.json.params.video = {};
+				json = form.JSONRPC
+				
+        //Construct the JSON request:
+				BCL.json.method = "create_video";
+				BCL.json.params.video.name = 'test ' + parseInt(Math.random() * 1000);
+				// BCL.json.params.video.shortDescription = 'test description';
+				BCL.json.params.video.startDate = Date.now();
+
+				BCL.json.params.video.endDate = null;
 				// if (BCL.tags.value !== "") {
     //       // 2do: add strip spaces
 				// 	BCL.json.params.video.tags = BCL.tags.value.split(",");
 				// }
-  	 //    BCL.json.params.encode_to = BCL.encodeTo.options[BCL.encodeTo.selectedIndex].value;
-	  	// 	BCL.json.params.create_multiple_renditions = BCL.multiRenditions.options[BCL.multiRenditions.selectedIndex].value;
+  	    BCL.json.params.encode_to = 'MP4';
+	  		BCL.json.params.create_multiple_renditions = 'False';
 		  
-	  	// 	BCL.json.params.token = document.getElementById('yourWriteToken').value;
+	  		BCL.json.params.token = "nE8-UGtf07sMEy9aDP3IR9tCQYCL9yCWtT9agH_eVQ2lVPhV7PymVA..";
 		  
-				// json.value  = JSON.stringify(BCL.json);
-				// document.getElementById('JSONView').value = json.value;
-				// document.getElementById("jsonRequest1").innerHTML = JSON.stringify(BCL.json);
-    //     console.log(JSON.stringify(BCL.json));
-        json = form.JSONRPC;
-        json.value  = document.getElementById('jsonTest').value;
-        document.getElementById('JSONView').value = json.value;
+				json.value  = JSON.stringify(BCL.json);
+				document.getElementById('JSONView').value = json.value;
+				document.getElementById("jsonRequest1").innerHTML = JSON.stringify(BCL.json);
+
+        // json = form.JSONRPC;
+        // json.value  = document.getElementById('jsonTest').value;
+        // document.getElementById('JSONView').value = json.value;
         // document.getElementById("jsonRequest1").innerHTML = JSON.stringify(BCL.json);
         // console.log(JSON.stringify(json.value));
       }
@@ -180,7 +183,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
   // document.getElementById('name').value = 'test ' + parseInt(Math.random() * 1000);
-
 
 }, false);
 
